@@ -1,0 +1,182 @@
+CREATE SEQUENCE utente_ntessera_seq
+	INCREMENT 1
+	MINVALUE 1
+	MAXVALUE 999999999
+	START 4
+	CACHE 1;
+
+CREATE TABLE utente(
+    username character(30) NOT NULL PRIMARY KEY,
+    pwd character(30) NOT NULL,
+    nome character(30) NOT NULL,
+    cognome character(30) NOT NULL,
+    telefono numeric(10) NOT NULL,
+    ntessera integer NOT NULL DEFAULT nextval('utente_ntessera_seq'),
+    dataregistrazione date NOT NULL,
+    datanascita date,
+    luogonascita character(15),
+    sesso character(1),
+    citta character(15),
+    provincia character(15),
+    stato character(15),
+    tipo character(12)
+);
+
+
+
+CREATE TABLE casaeditrice(
+
+	nomeCE character(30) PRIMARY KEY,
+	sede CHAR(15)
+	
+);
+
+
+CREATE SEQUENCE autore_IDautore_seq
+	INCREMENT 1
+	MINVALUE 1
+	MAXVALUE 999999999
+	START 4
+	CACHE 1;
+
+CREATE TABLE autore(
+    IDAutore integer NOT NULL DEFAULT nextval('autore_IDautore_seq') PRIMARY KEY,
+    nome character(15) NOT NULL,
+    cognome character(15) NOT NULL,
+    datanascita date,
+    luogonascita character(15),
+    biografia character(250)
+);
+
+
+CREATE SEQUENCE opera_IDopera_seq
+	INCREMENT 1
+	MINVALUE 1
+	MAXVALUE 999999999
+	START 5
+	CACHE 1;
+
+CREATE TABLE opera(
+	IDOpera integer NOT NULL DEFAULT nextval('opera_IDopera_seq') PRIMARY KEY,
+	titolo character(50) NOT NULL,
+	linguaorig character(20) NOT NULL,
+	annopub numeric(4) NOT NULL,
+	IDAutore integer NOT NULL DEFAULT nextval('autore_IDautore_seq'),
+	FOREIGN KEY(IDAutore) references autore(IDAutore)
+);
+
+
+CREATE SEQUENCE copia_numeroReg_seq
+	INCREMENT 1
+	MINVALUE 1
+	MAXVALUE 999999999
+	START 6
+	CACHE 1;
+
+CREATE TABLE copia(
+
+	numeroReg integer NOT NULL DEFAULT nextval('copia_numeroReg_seq') PRIMARY KEY,
+	codISBN NUMERIC(13) NOT NULL,
+	annoStampa numeric(4) NOT NULL,
+	lingua CHAR(20) NOT NULL,
+	edizione CHAR(15),
+	sezione CHAR(15)NOT NULL,
+	scaffale CHAR(5)NOT NULL,
+	IDOpera integer NOT NULL DEFAULT nextval('opera_IDopera_seq'),
+	nomeCE CHAR(30) NOT NULL,
+	FOREIGN KEY (IDOpera) REFERENCES opera(IDOpera),
+	FOREIGN KEY (nomeCE) REFERENCES casaeditrice(nomeCE)
+);
+
+
+CREATE TABLE prestito(
+
+	dataInizio date NOT NULL,
+	numeroReg integer NOT NULL DEFAULT nextval('copia_numeroReg_seq'),
+	username character(30) NOT NULL,
+	dataRiconsegna date,
+	accettato boolean DEFAULT false,
+
+	PRIMARY KEY(dataInizio, numeroReg, username),
+	FOREIGN KEY (numeroReg) REFERENCES copia(numeroReg),
+	FOREIGN KEY (username) REFERENCES utente(username)
+    
+);
+
+
+CREATE TABLE recensione(
+
+	voto NUMERIC(2,0),
+	commento CHAR(200),
+	numeroreg integer NOT NULL DEFAULT nextval('copia_numeroReg_seq'),
+	username character(30) NOT NULL,
+
+	FOREIGN KEY (numeroreg) REFERENCES copia(numeroreg),
+	FOREIGN KEY (username) REFERENCES utente(username)
+    
+);
+
+
+
+--UTENTE
+INSERT INTO utente(username,pwd,nome,cognome,telefono,ntessera,dataregistrazione,tipo)
+VALUES('Mario','ciao','Mario','Rossi',340112343,1,'2017-06-01','dipendente');
+
+INSERT INTO utente(username,pwd,nome,cognome,telefono,ntessera,dataregistrazione,tipo)
+VALUES('Alex@gmail.com','ciao','Alessandro','Frangiamone',340748394,2,'2017-06-21','studente');
+
+
+
+--AUTORE
+INSERT INTO autore(idautore,nome,cognome)
+VALUES(1,'Stephen','King');
+
+INSERT INTO autore(idautore,nome,cognome)
+VALUES(2,'Christoper','Paolini');
+
+INSERT INTO autore(idautore,nome,cognome)
+VALUES(3,'J.K.','Rowling');
+
+
+
+--CASA EDITRICE
+INSERT INTO casaeditrice(nomece)
+VALUES('Mondadori');
+
+INSERT INTO casaeditrice(nomece)
+VALUES('Fabbri Editore');
+
+INSERT INTO casaeditrice(nomece)
+VALUES('Salani Editore');
+
+
+
+--OPERA
+INSERT INTO opera(idopera,titolo,linguaorig,annopub,idautore)
+VALUES(1,'IT','Inglese',1986,1);
+
+INSERT INTO opera(idopera,titolo,linguaorig,annopub,idautore)
+VALUES(2,'Eragon','Inglese',2002,2);
+
+INSERT INTO opera(idopera,titolo,linguaorig,annopub,idautore)
+VALUES(3,'Shining','Inglese',1980,1);
+
+INSERT INTO opera(idopera,titolo,linguaorig,annopub,idautore)
+VALUES(4,'Harry Potter e la Pietra Filosofale','Inglese',1997,3);
+
+
+--COPIA
+INSERT INTO copia(numeroreg,codisbn,annostampa,lingua,edizione,sezione,scaffale,idopera,nomece)
+VALUES(1,4323452345432,1990,'Italiano',1,'LET','D3',1,'Mondadori');
+
+INSERT INTO copia(numeroreg,codisbn,annostampa,lingua,edizione,sezione,scaffale,idopera,nomece)
+VALUES(2,5993855621732,2003,'Italiano',1,'FAN','F5',2,'Fabbri Editore');
+
+INSERT INTO copia(numeroreg,codisbn,annostampa,lingua,edizione,sezione,scaffale,idopera,nomece)
+VALUES(3,4323452345432,1990,'Italiano',2,'LET','D3',1,'Mondadori');
+
+INSERT INTO copia(numeroreg,codisbn,annostampa,lingua,edizione,sezione,scaffale,idopera,nomece)
+VALUES(4,6839288891211,1988,'Italiano',1,'LET','D6',3,'Mondadori');
+
+INSERT INTO copia(numeroreg,codisbn,annostampa,lingua,edizione,sezione,scaffale,idopera,nomece)
+VALUES(5,9837472887832,1998,'Italiano',1,'FAN','F9',4,'Salani Editore');

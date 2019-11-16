@@ -1,0 +1,26 @@
+Entita'+ Attributi Biblio:
+
+UTENTE:  username(chiave primaria), Nome, Cognome, Numero di telefono, password, numeroTessera, DataRegistr,  Dipendente
+	- Attributi null opzionali: dataNascita, LuogoNascita(Città), sesso, citta-->(Attributo composto:citta+provincia+stato)
+
+	- CATEGORIA DIVISIONE DEI TRE SOTTOFIGLI:
+							STUDENTE: Max 5 libri per Max 2 mesi
+					
+							DOCENTI: Max 10 libri per Max 3 mesi
+
+							ALTRO: Max 3 libri per Max 2 settimane
+
+PRESTITO: Utente.username e copia.numeroReg(chiavi esterne), dataInizio, dataRiconsegna (null), accettato
+
+(libro)OPERA: IDOpera (chiave), titolo, linguaOrig, annoPubblicazione, autore.IDAutore(chiave esterna)
+
+(libro) COPIA: numeroReg(chiave primaria), codISBN, annoStampa, lingua, edizione, sezione, scaffale, casaeditrice.nomeCE(chiaveEsterna), Opera.IDOpera(chiaveEsterna)
+
+CASA EDITRICE: nomeCE (chiave primaria), sede
+
+AUTORE: IDAutore (chiave primaria), nome, cognome, dataNascita, luogoNascita , biograf
+
+RECENSIONE: opera.IDOpera(chiaveEsterna), utente.username(chiaveEsterna), commento, voto
+
+
+
